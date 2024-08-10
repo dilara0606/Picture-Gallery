@@ -1,0 +1,24 @@
+{
+  "name": "etkilesimligaleri",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.3.4"
+  },
+  "dependencies": {
+    "dat.gui": "^0.7.9",
+    "gsap": "^3.12.5",
+    "node-three-gltf": "^1.8.1",
+    "npm-gui": "^4.0.4",
+    "three": "^0.167.0",
+    "three-orbitcontrols": "^2.110.3",
+    "three-transform-controls": "^1.0.4",
+    "tree": "^0.1.3"
+  }
+}
