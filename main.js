@@ -2,7 +2,7 @@ import './main.css'
 import * as THREE from "three"
 import gsap from 'gsap'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GUI } from 'dat.gui';
+// import { GUI } from 'dat.gui';
 
 var scene;
 var camera;
@@ -13,8 +13,7 @@ var params = {
 
 function createEnvironment(){
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0.9, 0.9, 0.9);
-    const gui = new GUI();
+    scene.background = new THREE.Color(0x000000);  // Arka plan rengini siyah yapmak için
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
     camera.position.x = 50;
@@ -33,38 +32,72 @@ function createEnvironment(){
     var controls = new OrbitControls(camera, renderer.domElement);
     controls.update();
 
-    addBoxWithTexture('floor', 250, 5, 250, 0, -2.5, 0, 'classicdark');
+    addFloor('floor', 250, 5, 250, 0, -2.5, 0, 'classicdark');
 
-    // Add four walls with light pink color
-    const wallColor = 0xFFC0CB;
-    addBox('wall1', 250, 70, 5, 0, 22.5, -127.5, wallColor); // back wall
-    addBox('wall2', 250, 70, 5, 0, 22.5, 127.5, wallColor);  // front wall
-    addBox('wall3', 5, 70, 250, -127.5, 22.5, 0, wallColor); // left wall
-    addBox('wall4', 5, 70, 250, 127.5, 22.5, 0, wallColor);  // right wall
+    addWall('wall1', 250, 70, 5, 0, 22.5, -127.5, 'concrete_wall_001'); // back wall
+    addWall('wall2', 250, 70, 5, 0, 22.5, 127.5, 'concrete_wall_001');  // front wall
+    addWall('wall3', 5, 70, 250, -127.5, 22.5, 0, 'concrete_wall_001'); // left wall
+    addWall('wall4', 5, 70, 250, 127.5, 22.5, 0, 'concrete_wall_001');  // right wall
 
-    // Add the couch in the center of the room
-    addCouch('couch', 30, 15, 15, 0, 7.5, 0, '4K-curtain_2');
+    addCouch('couch1', 60, 10, 15, 0, 5, -50, '4K-curtain_2');
+    addCouch('couch2', 60, 10, 15, 0, 5, 50, '4K-curtain_2');
+    addCouch('couch3', 15, 10, 60, -50, 5, 0, '4K-curtain_2');
+    addCouch('couch4', 15, 10, 60, 50, 5, 0, '4K-curtain_2');
 
-    // Add vases with flowers to each corner
-    addVaseWithFlowers('vase1', -120, 5, -120);
-    addVaseWithFlowers('vase2', -120, 5, 120);
-    addVaseWithFlowers('vase3', 120, 5, -120);
-    addVaseWithFlowers('vase4', 120, 5, 120);
+    addVaseWithFlowers('vase1', -110, 5, -110, 'fabric_96');
+    addVaseWithFlowers('vase2', -110, 5, 110, 'fabric_96');
+    addVaseWithFlowers('vase3', 110, 5, -110, 'fabric_96');
+    addVaseWithFlowers('vase4', 110, 5, 110, 'fabric_96');
 
-        // Add frames to each wall
-    addFrame('frame1', 50, 25, 1, 55, 22.5, -125, 'frame_texture'); // Back wall
-    addFrame('frame2', 50, 25, 1, 0, 22.5, -125, 'frame_texture');  // Back wall
-    addFrame('frame3', 50, 25, 1, -55, 22.5, -125, 'frame_texture');  // Front wall
+    addSpot('spot1', 55, 42.5, -125, 'Metal028_4K');
+    addSpot('spot2', 0, 42.5, -125, 'Metal028_4K');
+    addSpot('spot3', -55, 42.5, -125, 'Metal028_4K');
 
-    addFrame('frame4', 50, 25, 0, 80, 130, 'frame_texture');   // Front wall
-    addFrame('frame5', 50, 25,  0, 22.5, 127.5, 'frame_texture'); // Left wall
-    addFrame('frame6', 50, 25,  0, 22.5, 127.5, 'frame_texture');  // Left wall
+    // addSpotLight("light2", 5, new THREE.Color(1, 0, 0), new THREE.Vector3(55, 42.5, -125));
+    // addSpotLight("light3", 5, new THREE.Color(1, 0, 0), new THREE.Vector3(0, 42.5, -125));
+    // addSpotLight("light4", 5, new THREE.Color(1, 0, 0), new THREE.Vector3(-55, 42.5, -125));
 
-    addFrame('frame7', 50, 25, 127.5, 22.5, 0, 'frame_texture');  // Right wall
-    addFrame('frame8', 50, 25, 127.5, 22.5, 0, 'frame_texture');   // Right wall
-    addFrame('frame8', 50, 25, 127.5, 22.5, 0, 'frame_texture');   // Right wall
+    addSpot('spot4', 55, 42.5, 125, 'Metal028_4K');
+    addSpot('spot5', 0, 42.5, 125, 'Metal028_4K');
+    addSpot('spot6', -55, 42.5, 125, 'Metal028_4K');
 
-    addSpotLight("light1", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    // addSpotLight("light5", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    // addSpotLight("light6", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    // addSpotLight("light7", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+
+    addSpot('spot7', -125, 42.5, 55, 'Metal028_4K');
+    addSpot('spot8', -125, 42.5, 0, 'Metal028_4K');
+    addSpot('vase9', -125, 42.5, -55, 'Metal028_4K');
+
+    // addSpotLight("light8", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    // addSpotLight("light9", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    // addSpotLight("light10", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+
+    addSpot('spot10', 125, 42.5, 55, 'Metal028_4K');
+    addSpot('spot11', 125, 42.5, 0, 'Metal028_4K');
+    addSpot('spot12', 125, 42.5, -55, 'Metal028_4K');
+
+    // addSpotLight("light11", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    // addSpotLight("light12", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    // addSpotLight("light13", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+
+    addFrame('frame1', 50, 25, 1, 55, 22.5, -125, 'frame');
+    addFrame('frame2', 50, 25, 1, 0, 22.5, -125, 'frame'); 
+    addFrame('frame3', 50, 25, 1, -55, 22.5, -125, 'frame');  
+
+    addFrame('frame4', 50, 25, 1, 55, 22.5, 125, 'frame');   
+    addFrame('frame5', 50, 25, 1, 0, 22.5, 125, 'frame'); 
+    addFrame('frame6', 50, 25, 1, -55, 22.5, 125, 'frame'); 
+
+    addFrame('frame7', 1, 25, 50, -125, 22.5, 55, 'frame'); 
+    addFrame('frame8', 1, 25, 50, -125, 22.5, 0, 'frame');   
+    addFrame('frame9', 1, 25, 50, -125, 22.5, -55, 'frame');  
+
+    addFrame('frame10', 1, 25, 50, 125, 22.5, 55, 'frame');  
+    addFrame('frame11', 1, 25, 50, 125, 22.5, 0, 'frame');   
+    addFrame('frame12', 1, 25, 50, 125, 22.5, -55, 'frame');
+
+    // addSpotLight("light1", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
 
     var ambientLight = new THREE.AmbientLight(0xaaaaaa, 1);
     scene.add(ambientLight);
@@ -79,9 +112,20 @@ function render(){
     });
 }
 
-function addBox(name, w, h, d, x, y, z, color){
+function addWall(name, w, h, d, x, y, z, texture){
     var geometry = new THREE.BoxGeometry(w, h, d);
-    var material = new THREE.MeshStandardMaterial({color: color});
+    var material = new THREE.MeshStandardMaterial({color: 0xffffff});
+
+    var loader = new THREE.TextureLoader();
+    material.map = loader.load('../textures/wallpaper/' + texture + '_disp_4k.jpg');
+    material.normalDXMap = loader.load('../textures/wallpaper/' + texture + '_nor_dx_4k.jpg');
+    material.roughnessMap = loader.load('../textures/wallpaper/' + texture + '_rough_4k.jpg');
+    material.normalGLMap = loader.load('../textures/wallpaper/' + texture + '_nor_gl_4k.jpg');
+    material.diffMap = loader.load('../textures/wallpaper/' + texture + '_diff_4k.jpg');
+    material.aoMap = loader.load('../textures/wallpaper/' + texture + '_ao_4k.jpg');
+    material.displacementScale = 0;
+    material.displacementBias = 0;
+
     var mesh = new THREE.Mesh(geometry, material);
 
     mesh.name = name;
@@ -94,19 +138,15 @@ function addBox(name, w, h, d, x, y, z, color){
     scene.add(mesh);
 }
 
-function addBoxWithTexture(name, w, h, d, x, y, z, texture){
+function addFloor(name, w, h, d, x, y, z, texture){
     var geometry = new THREE.BoxGeometry(w, h, d);
     var material = new THREE.MeshStandardMaterial({color: 0xffffff});
 
     var loader = new THREE.TextureLoader();
-    material.map = loader.load('../textures/' + texture + '.jpg');
-    material.normalMap = loader.load('../textures/' + texture + '_normal.jpg');
-    material.roughnessMap = loader.load('../textures/' + texture + '_roughness.jpg');
-    material.specularLevelMap = loader.load('../textures/' + texture + '_specularLevel.jpg');
-    material.ambientMap = loader.load('../textures/' + texture + '_ambientocclusion.jpg');
-    material.metallicMap = loader.load('../textures/' + texture + '_metallic.jpg');
-    material.heightMap = loader.load('../textures/' + texture + '_height.jpg');
-    material.basecolorMap = loader.load('../textures/' + texture + '_basecolor.jpg');
+    material.map = loader.load('../textures/floor/' + texture + '.jpg');
+    material.normalMap = loader.load('../textures/floor/' + texture + '_normal.jpg');
+    material.roughnessMap = loader.load('../textures/floor/' + texture + '_roughness.jpg');
+    material.specularLevelMap = loader.load('../textures/floor/' + texture + '_specularLevel.jpg');
     material.displacementScale = 0;
     material.displacementBias = 0;
 
@@ -149,11 +189,24 @@ function addSpotLight(name, intensity, color, pos) {
     scene.add(light);
 }
 
-function addVaseWithFlowers(name, x, y, z){
-    // Larger Vase
+function addVaseWithFlowers(name, x, y, z, texture){
+
     var vaseGeometry = new THREE.CylinderGeometry(10, 10, 40, 32);
-    var vaseMaterial = new THREE.MeshStandardMaterial({color: 0x8B4513}); // Brown color for vase
+    var vaseMaterial = new THREE.MeshStandardMaterial({color: 0xffffff});
+    
+    var loader = new THREE.TextureLoader();
+    vaseMaterial.normalMap = loader.load('../textures/vase/' + texture + '_normal-4K.jpg');
+    vaseMaterial.roughnessMap = loader.load('../textures/vase/' + texture + '_roughness-4K.jpg');
+    vaseMaterial.ambientocclusionMap = loader.load('../textures/vase/' + texture + '_ambientocclusion-4K.jpg');
+    vaseMaterial.map = loader.load('../textures/vase/' + texture + '_basecolor-4K.jpg');
+    vaseMaterial.opacityMap = loader.load('../textures/vase/' + texture + '_opacity-4K.jpg');
+    vaseMaterial.metallicMap = loader.load('../textures/vase/' + texture + '_metallic-4K.jpg');
+    vaseMaterial.heightMap = loader.load('../textures/vase/' + texture + '_height-4K.jpg');
+    vaseMaterial.displacementScale = 0;
+    vaseMaterial.displacementBias = 0;
+
     var vase = new THREE.Mesh(vaseGeometry, vaseMaterial);
+
     vase.position.set(x, y, z);
     vase.castShadow = true;
     vase.receiveShadow = true;
@@ -182,17 +235,17 @@ function addVaseWithFlowers(name, x, y, z){
 }
 
 function addCouch(name, w, h, d, x, y, z, texture) {
-    // Main body of the couch
+
     var bodyGeometry = new THREE.BoxGeometry(w, h, d);
     var material = new THREE.MeshStandardMaterial({color: 0xffffff});
     
     var loader = new THREE.TextureLoader();
-    material.normalMap = loader.load('../textures/' + texture + '_normal.jpg');
-    material.roughnessMap = loader.load('../textures/' + texture + '_roughness.jpg');
-    material.ambientMap = loader.load('../textures/' + texture + '_ambientocclusion.jpg');
-    material.metallicMap = loader.load('../textures/' + texture + '_metallic.jpg');
-    material.heightMap = loader.load('../textures/' + texture + '_height.jpg');
-    material.basecolorMap = loader.load('../textures/' + texture + '_basecolor.jpg');
+    material.normalMap = loader.load('../textures/couch/' + texture + '_normal.jpg');
+    material.roughnessMap = loader.load('../textures/couch/' + texture + '_roughness.jpg');
+    material.ambientMap = loader.load('../textures/couch/' + texture + '_ambientocclusion.jpg');
+    material.metallicMap = loader.load('../textures/couch/' + texture + '_metallic.jpg');
+    material.heightMap = loader.load('../textures/couch/' + texture + '_height.jpg');
+    material.map = loader.load('../textures/couch/' + texture + '_basecolor.jpg');
     material.displacementScale = 0;
     material.displacementBias = 0;
     
@@ -228,19 +281,22 @@ function addCouch(name, w, h, d, x, y, z, texture) {
 
     // Right back leg of the couch
     var rightBackLeg = new THREE.Mesh(legGeometry, legMaterial);
-    rightBackLeg.position.set(x + w / 2 - w / 10, y - h / 4, z + d / 2 - d / 10); // Lowered the position of the leg
+    rightBackLeg.position.set(x + w / 2 - w / 10, y - h / 4, z + d / 2 - d / 10);
     rightBackLeg.castShadow = true;
     rightBackLeg.receiveShadow = true;
     scene.add(rightBackLeg);
 }
 
 function addFrame(name, w, h, d, x, y, z, texture) {
-    // Çerçeve için ana gövde
+
     var geometry = new THREE.BoxGeometry(w, h, d);
-    var material = new THREE.MeshStandardMaterial({color: 0x000000}); // Çerçeve rengi
+    var material = new THREE.MeshStandardMaterial({color: 0xffffff});
 
     var loader = new THREE.TextureLoader();
-    material.map = loader.load('../textures/' + texture + '.jpg'); // Resim için texture
+    loader.load('../textures/' + texture + '.jpeg', function (loadedTexture) {
+        material.map = loadedTexture;
+        material.needsUpdate = true;
+    });
 
     var frame = new THREE.Mesh(geometry, material);
     frame.name = name;
@@ -251,4 +307,33 @@ function addFrame(name, w, h, d, x, y, z, texture) {
     scene.add(frame);
 }
 
+function addSpot(name, x, y, z, texture){
+
+    var vaseGeometry = new THREE.CylinderGeometry(10, 5, 5, 20);
+    var vaseMaterial = new THREE.MeshStandardMaterial({color: 0xffffff});
+    
+    var loader = new THREE.TextureLoader();
+    vaseMaterial.map = loader.load('../textures/spot/' + texture + '_Color.jpg');
+    vaseMaterial.displacementMap = loader.load('../textures/spot/' + texture + '_Displacement.jpg');
+    vaseMaterial.roughnessMap = loader.load('../textures/spot/' + texture + '_Roughness.jpg');
+    vaseMaterial.normalDXmap = loader.load('../textures/spot/' + texture + '_NormalDX.jpg');
+    vaseMaterial.normalGLMap = loader.load('../textures/spot/' + texture + '_NormalGL.jpg');
+    vaseMaterial.metallicMap = loader.load('../textures/spot/' + texture + '_Metalness.jpg');
+    vaseMaterial.displacementScale = 0;
+    vaseMaterial.displacementBias = 0;
+
+    var vase = new THREE.Mesh(vaseGeometry, vaseMaterial);
+
+    vase.position.set(x, y, z);
+    vase.castShadow = true;
+    vase.receiveShadow = true;
+    scene.add(vase);
+}
+
 createEnvironment();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
