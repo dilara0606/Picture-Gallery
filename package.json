@@ -16,7 +16,7 @@
     "gsap": "^3.12.5",
     "node-three-gltf": "^1.8.1",
     "npm-gui": "^4.0.4",
-    "three": "^0.167.0",
+    "three": "^0.167.1",
     "three-orbitcontrols": "^2.110.3",
     "three-transform-controls": "^1.0.4",
     "tree": "^0.1.3"

@@ -7,13 +7,15 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 var scene;
 var camera;
 var renderer;
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
 var params = {
     color: 0x00ff00
 }
 
 function createEnvironment(){
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000);  // Arka plan rengini siyah yapmak için
+    scene.background = new THREE.Color(0x000000);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
     camera.position.x = 50;
@@ -30,77 +32,83 @@ function createEnvironment(){
     document.getElementById("webgl").appendChild(renderer.domElement);
 
     var controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = true;
     controls.update();
 
     addFloor('floor', 250, 5, 250, 0, -2.5, 0, 'classicdark');
+    // addFloor('floor', 250, 5, 250, 0, 80, 0, 'classicdark');
 
-    addWall('wall1', 250, 70, 5, 0, 22.5, -127.5, 'concrete_wall_001'); // back wall
-    addWall('wall2', 250, 70, 5, 0, 22.5, 127.5, 'concrete_wall_001');  // front wall
-    addWall('wall3', 5, 70, 250, -127.5, 22.5, 0, 'concrete_wall_001'); // left wall
-    addWall('wall4', 5, 70, 250, 127.5, 22.5, 0, 'concrete_wall_001');  // right wall
+    const wallTexture = "concrete_wall_001";
+    const vaseTexture = "fabric_96";
+    const coachTexture = "4K-curtain_2";
 
-    addCouch('couch1', 60, 10, 15, 0, 5, -50, '4K-curtain_2');
-    addCouch('couch2', 60, 10, 15, 0, 5, 50, '4K-curtain_2');
-    addCouch('couch3', 15, 10, 60, -50, 5, 0, '4K-curtain_2');
-    addCouch('couch4', 15, 10, 60, 50, 5, 0, '4K-curtain_2');
+    addWall('wall1', 250, 70, 5, 0, 22.5, -127.5, wallTexture); // back wall
+    addWall('wall2', 250, 70, 5, 0, 22.5, 127.5, wallTexture);  // front wall
+    addWall('wall3', 5, 70, 250, -127.5, 22.5, 0, wallTexture); // left wall
+    addWall('wall4', 5, 70, 250, 127.5, 22.5, 0, wallTexture);  // right wall
 
-    addVaseWithFlowers('vase1', -110, 5, -110, 'fabric_96');
-    addVaseWithFlowers('vase2', -110, 5, 110, 'fabric_96');
-    addVaseWithFlowers('vase3', 110, 5, -110, 'fabric_96');
-    addVaseWithFlowers('vase4', 110, 5, 110, 'fabric_96');
+    addCouch('couch1', 60, 10, 15, 0, 5, -50, coachTexture);
+    addCouch('couch2', 60, 10, 15, 0, 5, 50, coachTexture);
+    addCouch('couch3', 15, 10, 60, -50, 5, 0, coachTexture);
+    addCouch('couch4', 15, 10, 60, 50, 5, 0, coachTexture);
 
-    addSpot('spot1', 55, 42.5, -125, 'Metal028_4K');
-    addSpot('spot2', 0, 42.5, -125, 'Metal028_4K');
-    addSpot('spot3', -55, 42.5, -125, 'Metal028_4K');
+    addVaseWithFlowers('vase1', -110, 5, -110, vaseTexture);
+    addVaseWithFlowers('vase2', -110, 5, 110, vaseTexture);
+    addVaseWithFlowers('vase3', 110, 5, -110, vaseTexture);
+    addVaseWithFlowers('vase4', 110, 5, 110, vaseTexture);
 
-    // addSpotLight("light2", 5, new THREE.Color(1, 0, 0), new THREE.Vector3(55, 42.5, -125));
-    // addSpotLight("light3", 5, new THREE.Color(1, 0, 0), new THREE.Vector3(0, 42.5, -125));
-    // addSpotLight("light4", 5, new THREE.Color(1, 0, 0), new THREE.Vector3(-55, 42.5, -125));
+    addSpot('spot1', 55, 42.5, -125);
+    addSpot('spot2', 0, 42.5, -125);
+    addSpot('spot3', -55, 42.5, -125);
 
-    addSpot('spot4', 55, 42.5, 125, 'Metal028_4K');
-    addSpot('spot5', 0, 42.5, 125, 'Metal028_4K');
-    addSpot('spot6', -55, 42.5, 125, 'Metal028_4K');
+    addPointLight(55, 42.5, -123, new THREE.Color(1, 1, 1));
+    addPointLight(0, 42.5, -123, new THREE.Color(1, 1, 1));
+    addPointLight(-55, 42.5, -123, new THREE.Color(1, 1, 1));
 
-    // addSpotLight("light5", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
-    // addSpotLight("light6", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
-    // addSpotLight("light7", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    addSpot('spot4', 55, 42.5, 125);
+    addSpot('spot5', 0, 42.5, 125);
+    addSpot('spot6', -55, 42.5, 125);
 
-    addSpot('spot7', -125, 42.5, 55, 'Metal028_4K');
-    addSpot('spot8', -125, 42.5, 0, 'Metal028_4K');
-    addSpot('vase9', -125, 42.5, -55, 'Metal028_4K');
+    addPointLight(55, 42.5, 123, new THREE.Color(1, 1, 1));
+    addPointLight(0, 42.5, 123, new THREE.Color(1, 1, 1));
+    addPointLight(-55, 42.5, 123, new THREE.Color(1, 1, 1));
 
-    // addSpotLight("light8", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
-    // addSpotLight("light9", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
-    // addSpotLight("light10", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    addSpot('spot7', -125, 42.5, 55);
+    addSpot('spot8', -125, 42.5, 0);
+    addSpot('vase9', -125, 42.5, -55);
 
-    addSpot('spot10', 125, 42.5, 55, 'Metal028_4K');
-    addSpot('spot11', 125, 42.5, 0, 'Metal028_4K');
-    addSpot('spot12', 125, 42.5, -55, 'Metal028_4K');
+    addPointLight(-123, 42.5, 55, new THREE.Color(1, 1, 1));
+    addPointLight(-123, 42.5, 0, new THREE.Color(1, 1, 1));
+    addPointLight(-123, 42.5, -55, new THREE.Color(1, 1, 1));
 
-    // addSpotLight("light11", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
-    // addSpotLight("light12", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
-    // addSpotLight("light13", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    addSpot('spot10', 125, 42.5, 55);
+    addSpot('spot11', 125, 42.5, 0);
+    addSpot('spot12', 125, 42.5, -55);
 
-    addFrame('frame1', 50, 25, 1, 55, 22.5, -125, 'frame');
-    addFrame('frame2', 50, 25, 1, 0, 22.5, -125, 'frame'); 
-    addFrame('frame3', 50, 25, 1, -55, 22.5, -125, 'frame');  
+    addPointLight(123, 42.5, 55, new THREE.Color(1, 1, 1));
+    addPointLight(123, 42.5, 0, new THREE.Color(1, 1, 1));
+    addPointLight(123, 42.5, -55, new THREE.Color(1, 1, 1));
 
-    addFrame('frame4', 50, 25, 1, 55, 22.5, 125, 'frame');   
-    addFrame('frame5', 50, 25, 1, 0, 22.5, 125, 'frame'); 
-    addFrame('frame6', 50, 25, 1, -55, 22.5, 125, 'frame'); 
+    addFrame('frame1', 50, 25, 1, 55, 22.5, -125, "frame1");
+    addFrame('frame2', 50, 25, 1, 0, 22.5, -125, "frame2"); 
+    addFrame('frame3', 50, 25, 1, -55, 22.5, -125, "frame3");  
 
-    addFrame('frame7', 1, 25, 50, -125, 22.5, 55, 'frame'); 
-    addFrame('frame8', 1, 25, 50, -125, 22.5, 0, 'frame');   
-    addFrame('frame9', 1, 25, 50, -125, 22.5, -55, 'frame');  
+    addFrame('frame4', 50, 25, 1, 55, 22.5, 125, "frame4");   
+    addFrame('frame5', 50, 25, 1, 0, 22.5, 125, "frame5"); 
+    addFrame('frame6', 50, 25, 1, -55, 22.5, 125, "frame6"); 
 
-    addFrame('frame10', 1, 25, 50, 125, 22.5, 55, 'frame');  
-    addFrame('frame11', 1, 25, 50, 125, 22.5, 0, 'frame');   
-    addFrame('frame12', 1, 25, 50, 125, 22.5, -55, 'frame');
+    addFrame('frame7', 1, 25, 50, -125, 22.5, 55, "frame7"); 
+    addFrame('frame8', 1, 25, 50, -125, 22.5, 0, "frame8");   
+    addFrame('frame9', 1, 25, 50, -125, 22.5, -55, "frame9");  
 
-    // addSpotLight("light1", 5, new THREE.Color(1, 1, 1), new THREE.Vector3(250, 250, 250));
+    addFrame('frame10', 1, 25, 50, 125, 22.5, 55, "frame10");  
+    addFrame('frame11', 1, 25, 50, 125, 22.5, 0, "frame11");   
+    addFrame('frame12', 1, 25, 50, 125, 22.5, -55, "frame12");
 
-    var ambientLight = new THREE.AmbientLight(0xaaaaaa, 1);
-    scene.add(ambientLight);
+    // var ambientLight = new THREE.AmbientLight(0xaaaaaa, 1);
+    // scene.add(ambientLight);
 
     render();
 }
@@ -189,11 +197,30 @@ function addSpotLight(name, intensity, color, pos) {
     scene.add(light);
 }
 
+function addPointLight (x, y, z, helperColor){
+    const color = 0xffffff;
+    const intensity = 15;
+    const distance = 5000;
+    const decay = 1;
+  
+    const pointLight = new THREE.PointLight(color, intensity, distance, decay);
+    pointLight.position.set(x, y, z);
+  
+    scene.add(pointLight);
+  
+    // const pointLightHelper = new THREE.PointLightHelper(
+    //   pointLight,
+    //   10,
+    //   helperColor
+    // );
+    // scene.add(pointLightHelper);
+  };
+
 function addVaseWithFlowers(name, x, y, z, texture){
 
-    var vaseGeometry = new THREE.CylinderGeometry(10, 10, 40, 32);
+    var vaseGeometry = new THREE.CylinderGeometry(8, 8, 30, 20);
     var vaseMaterial = new THREE.MeshStandardMaterial({color: 0xffffff});
-    
+
     var loader = new THREE.TextureLoader();
     vaseMaterial.normalMap = loader.load('../textures/vase/' + texture + '_normal-4K.jpg');
     vaseMaterial.roughnessMap = loader.load('../textures/vase/' + texture + '_roughness-4K.jpg');
@@ -212,26 +239,34 @@ function addVaseWithFlowers(name, x, y, z, texture){
     vase.receiveShadow = true;
     scene.add(vase);
 
-    // Stems and Flowers
-    for(let i = 0; i < 8; i++){
-        // Green stem
-        var stemGeometry = new THREE.CylinderGeometry(0.5, 0.5, 20, 8);
-        var stemMaterial = new THREE.MeshStandardMaterial({color: 0x228B22}); // Green color for stem
-        var stem = new THREE.Mesh(stemGeometry, stemMaterial);
-        stem.position.set(x + (Math.random() * 5 - 2.5), y + 20, z + (Math.random() * 5 - 2.5));
-        stem.castShadow = true;
-        stem.receiveShadow = true;
-        scene.add(stem);
+    // Ağacı saksının içerisine yerleştirme
+    function addTree(x, y, z) {
+        // Gövde oluşturma
+        var trunkGeometry = new THREE.CylinderGeometry(2, 4, 20, 16);
+        var trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Kahverengi gövde
+        var trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
 
-        // Flower head
-        var flowerGeometry = new THREE.SphereGeometry(3, 32, 32); // Larger flower
-        var flowerMaterial = new THREE.MeshStandardMaterial({color: 0xFF69B4}); // Pink color for flowers
-        var flower = new THREE.Mesh(flowerGeometry, flowerMaterial);
-        flower.position.set(stem.position.x, stem.position.y + 10, stem.position.z); // Positioned at the top of the stem
-        flower.castShadow = true;
-        flower.receiveShadow = true;
-        scene.add(flower);
+        // Gövdenin pozisyonu, saksının üst kısmına göre ayarlanıyor
+        trunk.position.set(x, y + 25, z);
+        trunk.castShadow = true;
+        trunk.receiveShadow = true;
+        scene.add(trunk);
+
+        // Yapraklar için küre oluşturma
+        for (let i = 0; i < 3; i++) {
+            var leafGeometry = new THREE.SphereGeometry(7 - i * 2, 32, 32); // Yaprakların çapı yukarıya doğru azalıyor
+            var leafMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 }); // Yeşil yapraklar
+            var leaf = new THREE.Mesh(leafGeometry, leafMaterial);
+
+            leaf.position.set(x, y + 35 + i * 5, z); // Yapraklar gövdenin üst kısmına yerleştiriliyor
+            leaf.castShadow = true;
+            leaf.receiveShadow = true;
+            scene.add(leaf);
+        }
     }
+
+    // Ağacı saksının içine ekliyoruz
+    addTree(x, y, z);
 }
 
 function addCouch(name, w, h, d, x, y, z, texture) {
@@ -288,12 +323,11 @@ function addCouch(name, w, h, d, x, y, z, texture) {
 }
 
 function addFrame(name, w, h, d, x, y, z, texture) {
-
     var geometry = new THREE.BoxGeometry(w, h, d);
-    var material = new THREE.MeshStandardMaterial({color: 0xffffff});
+    var material = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
     var loader = new THREE.TextureLoader();
-    loader.load('../textures/' + texture + '.jpeg', function (loadedTexture) {
+    loader.load('../textures/' + texture + '.jpg', function (loadedTexture) {
         material.map = loadedTexture;
         material.needsUpdate = true;
     });
@@ -304,23 +338,23 @@ function addFrame(name, w, h, d, x, y, z, texture) {
     frame.castShadow = true;
     frame.receiveShadow = true;
 
+    // Plane için ayrı bir mesh oluşturmak yerine, frame üzerine tıklama işlevi ekleyelim
+    frame.userData = { id: name, src: '../textures/' + texture + '.jpg' };
+
+    // Tıklama işlevi
+    frame.onClick = () => {
+        const fullscreenDiv = document.getElementById('fullscreen');
+        const fullscreenImg = document.getElementById('fullscreenImage');
+        fullscreenImg.src = frame.userData.src;
+        fullscreenDiv.classList.add('active');
+    };
+
     scene.add(frame);
 }
 
-function addSpot(name, x, y, z, texture){
-
+function addSpot(name, x, y, z) {
     var vaseGeometry = new THREE.CylinderGeometry(10, 5, 5, 20);
-    var vaseMaterial = new THREE.MeshStandardMaterial({color: 0xffffff});
-    
-    var loader = new THREE.TextureLoader();
-    vaseMaterial.map = loader.load('../textures/spot/' + texture + '_Color.jpg');
-    vaseMaterial.displacementMap = loader.load('../textures/spot/' + texture + '_Displacement.jpg');
-    vaseMaterial.roughnessMap = loader.load('../textures/spot/' + texture + '_Roughness.jpg');
-    vaseMaterial.normalDXmap = loader.load('../textures/spot/' + texture + '_NormalDX.jpg');
-    vaseMaterial.normalGLMap = loader.load('../textures/spot/' + texture + '_NormalGL.jpg');
-    vaseMaterial.metallicMap = loader.load('../textures/spot/' + texture + '_Metalness.jpg');
-    vaseMaterial.displacementScale = 0;
-    vaseMaterial.displacementBias = 0;
+    var vaseMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
     var vase = new THREE.Mesh(vaseGeometry, vaseMaterial);
 
@@ -330,10 +364,30 @@ function addSpot(name, x, y, z, texture){
     scene.add(vase);
 }
 
-createEnvironment();
-
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+window.addEventListener('click', (event) => {
+    // Mouse pozisyonunu normalize etme
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+    // Raycaster ile tıklama algılama
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+        const object = intersects[0].object;
+        if (object.onClick) object.onClick();
+    }
+});
+
+document.getElementById('closeFullscreen').addEventListener('click', () => {
+    const fullscreenDiv = document.getElementById('fullscreen');
+    fullscreenDiv.classList.remove('active');
+});
+
+createEnvironment();
